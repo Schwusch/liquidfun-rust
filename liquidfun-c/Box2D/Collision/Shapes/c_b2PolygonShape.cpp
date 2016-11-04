@@ -26,6 +26,10 @@ extern "C" {
         self->SetAsBox(hx, hy, center, angle);
     }
 
+    void b2PolygonShape_Set(b2PolygonShape* self, const b2Vec2* vertices, int32 count) {
+        self->Set(vertices, count);
+    }
+
     b2Shape* b2PolygonShape_Upcast(b2PolygonShape* self) {
         return static_cast<b2Shape*>(reinterpret_cast<b2PolygonShape*>(self));
     }
