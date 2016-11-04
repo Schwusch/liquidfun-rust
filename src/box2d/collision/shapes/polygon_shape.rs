@@ -11,8 +11,8 @@ extern {
     fn b2PolygonShape_New() -> *mut B2PolygonShape;
     fn b2PolygonShape_SetAsBox(ptr: *mut B2PolygonShape, hx: Float32, hy: Float32);
     fn b2PolygonShape_SetAsBox_Oriented(ptr: *mut B2PolygonShape, hx: Float32, hy: Float32, center: &Vec2, angle: Float32);
-    fn b2PolygonShape_Set(ptr: *mut B2PolygonShape, vertices: *const Vec2, count: Int32);
     fn b2PolygonShape_Upcast(ptr: *mut B2PolygonShape) -> *mut B2Shape;
+    fn b2PolygonShape_Set(ptr: *mut B2PolygonShape, vertices: *const Vec2, count: Int32);
 }
 
 /// A convex polygon. It is assumed that the interior of the polygon is to

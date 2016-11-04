@@ -50,6 +50,8 @@
 //! }
 //! ```
 
+#![allow(renamed_and_removed_lints)]
+
 extern crate libc;
 #[macro_use]
 extern crate bitflags;

@@ -39,5 +39,9 @@ extern "C" {
 		return self->GetLocalPoint(worldPoint);
 	}
 
+    void b2Body_SetTransform(b2Body* self, const b2Vec2& position, float32 angle) {
+    	self->SetTransform(position, angle);
+    }
+
 } // extern C
 
