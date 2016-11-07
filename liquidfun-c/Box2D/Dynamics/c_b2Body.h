@@ -15,6 +15,7 @@ extern "C" {
 	b2World* b2Body_GetWorld(b2Body* self);
 	b2Vec2 b2Body_GetLocalPoint(const b2Body* self, const b2Vec2& worldPoint);
     void b2Body_SetTransform(b2Body* self, const b2Vec2& position, float32 angle);
+    void b2Body_SetLinearVelocity(b2Body* self, const b2Vec2& v);
 
 #ifdef __cplusplus
 } // extern C

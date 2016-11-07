@@ -43,5 +43,9 @@ extern "C" {
     	self->SetTransform(position, angle);
     }
 
+    void b2Body_SetLinearVelocity(b2Body* self, const b2Vec2& v) {
+    	self->SetLinearVelocity(v);
+    }
+
 } // extern C
 
