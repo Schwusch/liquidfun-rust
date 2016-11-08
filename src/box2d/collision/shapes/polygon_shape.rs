@@ -81,7 +81,7 @@ impl PolygonShape {
         }
     }
 
-    /// Build vertices to represent an axis-aligned box centered on the local origin.
+    /// Build a convex polygon.
     /// @param hx the half-width.
     /// @param hy the half-height.
     pub fn set(&mut self, vertices: &[Vec2]) {

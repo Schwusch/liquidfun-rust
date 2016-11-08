@@ -39,13 +39,17 @@ extern "C" {
 		return self->GetLocalPoint(worldPoint);
 	}
 
-    void b2Body_SetTransform(b2Body* self, const b2Vec2& position, float32 angle) {
-    	self->SetTransform(position, angle);
-    }
+	void b2Body_SetTransform(b2Body* self, const b2Vec2& position, float32 angle) {
+		self->SetTransform(position, angle);
+	}
 
-    void b2Body_SetLinearVelocity(b2Body* self, const b2Vec2& v) {
-    	self->SetLinearVelocity(v);
-    }
+	void b2Body_SetLinearVelocity(b2Body* self, const b2Vec2& v) {
+		self->SetLinearVelocity(v);
+	}
+
+	b2Vec2 b2Body_GetLinearVelocity(b2Body* self) {
+		return self->GetLinearVelocity();
+	}
 
 } // extern C
 

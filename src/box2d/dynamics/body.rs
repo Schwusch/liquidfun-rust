@@ -113,6 +113,7 @@ extern {
     fn b2Body_GetLocalPoint(this: *const B2Body, worldPoint: &Vec2) -> Vec2;
     fn b2Body_SetTransform(this: *mut B2Body, position: &Vec2, angle: Float32);
     fn b2Body_SetLinearVelocity(this: *mut B2Body, v: &Vec2);
+    fn b2Body_GetLinearVelocity(this: *mut B2Body) -> Vec2;
 }
 
 /// A rigid body. These are created via b2World::CreateBody.
@@ -224,6 +225,12 @@ impl Body {
     pub fn set_linear_velocity(&mut self, v: &Vec2) {
         unsafe {
             b2Body_SetLinearVelocity(self.ptr, v)
+        }
+    }
+
+    pub fn get_linear_velocity(&mut self) -> Vec2 {
+        unsafe {
+            b2Body_GetLinearVelocity(self.ptr)
         }
     }
 }
