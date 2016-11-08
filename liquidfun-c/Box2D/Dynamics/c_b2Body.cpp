@@ -47,7 +47,7 @@ extern "C" {
 		self->SetLinearVelocity(v);
 	}
 
-	b2Vec2 b2Body_GetLinearVelocity(b2Body* self) {
+	const b2Vec2& b2Body_GetLinearVelocity(const b2Body* self) {
 		return self->GetLinearVelocity();
 	}
 

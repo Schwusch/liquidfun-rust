@@ -104,16 +104,16 @@ pub enum B2Body {}
 extern {
     fn b2Body_CreateFixture_FromShape(this: *mut B2Body, shape: *const B2Shape, density: Float32) -> *mut B2Fixture;
     fn b2Body_CreateFixture(this: *mut B2Body, def: *mut FixtureDef) -> *mut B2Fixture;
-    fn b2Body_GetAngle(this: *mut B2Body) -> Float32;
+    fn b2Body_GetAngle(this: *const B2Body) -> Float32;
     fn b2Body_GetFixtureList(this: *mut B2Body) -> *mut B2Fixture;
     fn b2Body_GetNext(this: *mut B2Body) -> *mut B2Body;
-    fn b2Body_GetPosition(this: *mut B2Body) -> &Vec2;
+    fn b2Body_GetPosition(this: *const B2Body) -> &Vec2;
     fn b2Body_GetUserData(this: *const B2Body) -> usize;
     fn b2Body_GetWorld(this: *const B2Body) -> *mut B2World;
     fn b2Body_GetLocalPoint(this: *const B2Body, worldPoint: &Vec2) -> Vec2;
     fn b2Body_SetTransform(this: *mut B2Body, position: &Vec2, angle: Float32);
     fn b2Body_SetLinearVelocity(this: *mut B2Body, v: &Vec2);
-    fn b2Body_GetLinearVelocity(this: *mut B2Body) -> Vec2;
+    fn b2Body_GetLinearVelocity(this: *const B2Body) -> &Vec2;
 }
 
 /// A rigid body. These are created via b2World::CreateBody.
@@ -228,7 +228,7 @@ impl Body {
         }
     }
 
-    pub fn get_linear_velocity(&mut self) -> Vec2 {
+    pub fn get_linear_velocity(&self) -> &Vec2 {
         unsafe {
             b2Body_GetLinearVelocity(self.ptr)
         }

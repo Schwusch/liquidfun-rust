@@ -73,8 +73,9 @@ fn hello_world() {
 		// Now print the position and angle of the body.
 		let position = body.get_position();
 		let angle = body.get_angle();
+		let vel = body.get_linear_velocity();
 
-		println!("{:?} angle: {:?}", position, angle);
+		println!("{:?} angle: {:?}, vel: {:?}", position, angle, vel);
 	}
 
 	// When the world destructor is called, all bodies and joints are freed. This can
