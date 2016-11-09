@@ -27,3 +27,14 @@ impl Vec2 {
 	}
 }
 
+/// A transform contains translation and rotation. It is used to represent
+/// the position and orientation of rigid frames.
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, PartialEq)]
+pub struct Transform { pub p: Vec2, pub q: Rot }
+
+/// Rotation
+/// Sine and cosine
+#[repr(C)]
+#[derive(Debug, Default, Copy, Clone, PartialEq)]
+pub struct Rot { pub s: f32, pub c: f32 }

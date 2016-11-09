@@ -5,6 +5,7 @@ use super::super::common::math::*;
 use super::super::common::settings::*;
 use super::super::particle::particle_system::*;
 use super::joints;
+use super::super::common::draw::{Draw, B2Draw};
 
 pub enum B2World {}
 
@@ -40,6 +41,7 @@ extern {
         max_motor_torque: Float32
     ) -> *mut joints::revolute_joint::B2RevoluteJoint;
 
+    fn b2World_SetDebugDraw(this: *mut B2World, debugDraw: *mut B2Draw);
 }
 
 /// The world class manages all physics entities, dynamic simulation,
@@ -171,7 +173,16 @@ impl World {
         unsafe {
             b2World_Step(self.ptr, time_step, velocity_iterations, position_iterations);
         }
-    }    
+    }
+
+    /// Register a routine for debug drawing. The debug draw functions are called
+    /// inside with b2World::DrawDebugData method. The debug draw object is owned
+    /// by you and must remain in scope.
+    pub fn set_debug_draw(&mut self, debug_draw: Draw) {
+        unsafe {
+            b2World_SetDebugDraw(self.ptr, debug_draw.ptr);
+        }
+    }
 
 }
 

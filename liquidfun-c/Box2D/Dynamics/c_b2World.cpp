@@ -87,6 +87,9 @@ extern "C" {
         self->Step(timeStep, velocityIterations, positionIterations);
     }
 
+    void b2World_SetDebugDraw(b2World* self, b2Draw* debugDraw) {
+        self->SetDebugDraw(debugDraw);
+    }
 
 } // extern C
 
