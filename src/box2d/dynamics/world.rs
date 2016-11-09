@@ -5,7 +5,7 @@ use super::super::common::math::*;
 use super::super::common::settings::*;
 use super::super::particle::particle_system::*;
 use super::joints;
-use super::super::common::draw::{Draw, B2Draw};
+use super::super::common::draw::BoxDebugDraw;
 
 pub enum B2World {}
 
@@ -41,14 +41,18 @@ extern {
         max_motor_torque: Float32
     ) -> *mut joints::revolute_joint::B2RevoluteJoint;
 
-    fn b2World_SetDebugDraw(this: *mut B2World, debugDraw: *mut B2Draw);
+    fn b2World_SetDebugDraw(this: *mut B2World, debug_draw: *mut CppDebugDraw);
+
+    fn CppDebugDraw_new(debug_draw: *mut BoxDebugDraw) -> *mut CppDebugDraw;
 }
+
+pub enum CppDebugDraw {}
 
 /// The world class manages all physics entities, dynamic simulation,
 /// and asynchronous queries. The world also contains efficient memory
 /// management facilities.
 pub struct World {
-	pub ptr: *mut B2World
+	pub ptr: *mut B2World,
 }
 
 impl World {
@@ -178,9 +182,9 @@ impl World {
     /// Register a routine for debug drawing. The debug draw functions are called
     /// inside with b2World::DrawDebugData method. The debug draw object is owned
     /// by you and must remain in scope.
-    pub fn set_debug_draw(&mut self, debug_draw: Draw) {
+    pub fn set_debug_draw(&mut self, debug_draw: &mut BoxDebugDraw) {
         unsafe {
-            b2World_SetDebugDraw(self.ptr, debug_draw.ptr);
+            b2World_SetDebugDraw(self.ptr, CppDebugDraw_new(debug_draw));
         }
     }
 

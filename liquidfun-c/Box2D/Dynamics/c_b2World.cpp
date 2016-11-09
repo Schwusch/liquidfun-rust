@@ -88,6 +88,7 @@ extern "C" {
     }
 
     void b2World_SetDebugDraw(b2World* self, b2Draw* debugDraw) {
+        // self->SetDebugDraw(new CppDebugDraw(debugDraw));
         self->SetDebugDraw(debugDraw);
     }
 

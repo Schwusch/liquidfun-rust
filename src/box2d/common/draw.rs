@@ -1,3 +1,7 @@
+#![allow(non_snake_case)]
+
+use std::slice::from_raw_parts;
+
 use super::super::common::math::*;
 use super::super::common::settings::*;
 
@@ -34,108 +38,97 @@ pub struct Color { pub r: f32, pub g: f32, pub b: f32 }
 #[derive(Debug, Default, Copy, Clone, PartialEq, Eq, Hash)]
 pub struct ParticleColor { pub r: u8, pub g: u8, pub b: u8, pub a: u8 }
 
-pub enum B2Draw {}
-
-extern {
-	fn b2Draw_SetFlags(this: *mut B2Draw, flags: UInt32);
-	fn b2Draw_GetFlags(this: *const B2Draw) -> UInt32;
-	fn b2Draw_AppendFlags(this: *mut B2Draw, flags: UInt32);
-	fn b2Draw_ClearFlags(this: *mut B2Draw, flags: UInt32);
-	fn b2Draw_DrawPolygon(this: *mut B2Draw, vertices: *const Vec2, vertexCount: Int32, color: &Color);
-	fn b2Draw_DrawSolidPolygon(this: *mut B2Draw, vertices: *const Vec2, vertexCount: Int32, color: &Color);
-	fn b2Draw_DrawCircle(this: *mut B2Draw, center: &Vec2, radius: f32, color: &Color);
-	fn b2Draw_DrawSolidCircle(this: *mut B2Draw, center: &Vec2, radius: f32, axis: &Vec2, color: &Color);
-	fn b2Draw_DrawParticles(this: *mut B2Draw, centers: *const Vec2, radius: f32, colors: *const ParticleColor, count: Int32);
-	fn b2Draw_DrawSegment(this: *mut B2Draw, p1: &Vec2, p2: &Vec2, color: &Color);
-	fn b2Draw_DrawTransform(this: *mut B2Draw, xf: &Transform);
+/// Implement and register this trait with a World to provide debug drawing of physics
+/// using World.set_debug_draw()
+pub trait Draw {
+	fn set_flags(&mut self, flags: UInt32);
+	fn get_flags(&self) -> UInt32;
+	fn append_flags(&mut self, flags: UInt32);
+	fn clear_flags(&mut self, flags: UInt32);
+	fn draw_polygon(&mut self, vertices: &[Vec2], color: &Color);
+	fn draw_solid_polygon(&mut self, vertices: &[Vec2], color: &Color);
+	fn draw_circle(&mut self, center: &Vec2, radius: f32, color: &Color);
+	fn draw_solid_circle(&mut self, center: &Vec2, radius: f32, axis: &Vec2, color: &Color);
+	fn draw_particles(&mut self, centers: &[Vec2], colors: &[ParticleColor], radius: f32);
+	fn draw_segment(&mut self, p1: &Vec2, p2: &Vec2, color: &Color);
+	fn draw_transform(&mut self, xf: &Transform);
 }
 
-/// Implement and register this class with a b2World to provide debug drawing of physics
-/// entities in your game.
-#[allow(raw_pointer_derive)]
-#[derive(Clone, Debug)]
-pub struct Draw {
-	pub ptr: *mut B2Draw
+pub type BoxDebugDraw = Box<Draw>;
+
+#[no_mangle]
+pub extern fn BoxDebugDraw_SetFlags(this: *mut BoxDebugDraw, flags: UInt32) {
+	unsafe {
+		(*this).set_flags(flags);
+	}
 }
 
-impl Draw {
-
-	/// Set the drawing flags.
-	pub fn set_flags(&mut self, flags: UInt32) {
-		unsafe {
-			b2Draw_SetFlags(self.ptr, flags);
-		}
+#[no_mangle]
+pub extern fn BoxDebugDraw_GetFlags(this: *mut BoxDebugDraw) -> UInt32 {
+	unsafe {
+		(*this).get_flags()
 	}
+}
 
-	/// Get the drawing flags.
-	pub fn get_flags(&self) -> UInt32 {
-		unsafe {
-			b2Draw_GetFlags(self.ptr)
-		}
+#[no_mangle]
+pub extern fn BoxDebugDraw_AppendFlags(this: *mut BoxDebugDraw, flags: UInt32) {
+	unsafe {
+		(*this).append_flags(flags);
 	}
+}
 
-	/// Append flags to the current flags.
-	pub fn append_flags(&mut self, flags: UInt32) {
-		unsafe {
-			b2Draw_AppendFlags(self.ptr, flags);
-		}
+#[no_mangle]
+pub extern fn BoxDebugDraw_ClearFlags(this: *mut BoxDebugDraw, flags: UInt32) {
+	unsafe {
+		(*this).clear_flags(flags);
 	}
+}
 
-	/// Clear flags from the current flags.
-	pub fn clear_flags(&mut self, flags: UInt32) {
-		unsafe {
-			b2Draw_ClearFlags(self.ptr, flags);
-		}
+#[no_mangle]
+pub extern fn BoxDebugDraw_DrawPolygon(this: *mut BoxDebugDraw, vertices: *const Vec2, vertexCount: Int32, color: &Color) {
+	unsafe {
+		(*this).draw_polygon(from_raw_parts(vertices, vertexCount as usize), color);
 	}
+}
 
-	/// Draw a closed polygon provided in CCW order.
-	pub fn draw_polygon(&mut self, vertices: &[Vec2], color: &Color) {
-		unsafe {
-			b2Draw_DrawPolygon(self.ptr, vertices.as_ptr(), vertices.len() as Int32, color);
-		}
+#[no_mangle]
+pub extern fn BoxDebugDraw_DrawSolidPolygon(this: *mut BoxDebugDraw, vertices: *const Vec2, vertexCount: Int32, color: &Color) {
+	unsafe {
+		(*this).draw_solid_polygon(from_raw_parts(vertices, vertexCount as usize), color);
 	}
+}
 
-	/// Draw a solid closed polygon provided in CCW order.
-	pub fn draw_solid_polygon(&mut self, vertices: &[Vec2], color: &Color) {
-		unsafe {
-			b2Draw_DrawSolidPolygon(self.ptr, vertices.as_ptr(), vertices.len() as Int32, color);
-		}
+#[no_mangle]
+pub extern fn BoxDebugDraw_DrawCircle(this: *mut BoxDebugDraw, center: &Vec2, radius: f32, color: &Color) {
+	unsafe {
+		(*this).draw_circle(center, radius, color);
 	}
+}
 
-	/// Draw a circle.
-	pub fn draw_circle(&mut self, center: &Vec2, radius: f32, color: &Color) {
-		unsafe {
-			b2Draw_DrawCircle(self.ptr, center, radius, color);
-		}
+#[no_mangle]
+pub extern fn BoxDebugDraw_DrawSolidCircle(this: *mut BoxDebugDraw, center: &Vec2, radius: f32, axis: &Vec2, color: &Color) {
+	unsafe {
+		(*this).draw_solid_circle(center, radius, axis, color);
 	}
+}
 
-	/// Draw a solid circle.
-	pub fn draw_solid_circle(&mut self, center: &Vec2, radius: f32, axis: &Vec2, color: &Color) {
-		unsafe {
-			b2Draw_DrawSolidCircle(self.ptr, center, radius, axis, color);
-		}
+#[no_mangle]
+pub extern fn BoxDebugDraw_DrawParticles(this: *mut BoxDebugDraw, centers: *const Vec2, radius: f32, colors: *const ParticleColor, count: Int32) {
+	unsafe {
+		(*this).draw_particles(from_raw_parts(centers, count as usize), from_raw_parts(colors, count as usize), radius);
 	}
+}
 
-	/// Draw a particle array
-	/// centers and colors must have the same length
-	pub fn draw_particles(&mut self, centers: &[Vec2], radius: f32, colors: &[ParticleColor]) {
-		// assert_eq!(centers.len(), colors.len());
-		unsafe {
-			b2Draw_DrawParticles(self.ptr, centers.as_ptr(), radius, colors.as_ptr(), colors.len() as Int32);
-		}
+#[no_mangle]
+pub extern fn BoxDebugDraw_DrawSegment(this: *mut BoxDebugDraw, p1: &Vec2, p2: &Vec2, color: &Color) {
+	unsafe {
+		(*this).draw_segment(p1, p2, color);
 	}
+}
 
-	/// Draw a line segment.
-	pub fn draw_segment(&mut self, p1: &Vec2, p2: &Vec2, color: &Color) {
-		unsafe {
-			b2Draw_DrawSegment(self.ptr, p1, p2, color);
-		}
-	}
-
-	/// Draw a transform. Choose your own length scale.
-	pub fn draw_transform(&mut self, xf: &Transform) {
-		unsafe {
-			b2Draw_DrawTransform(self.ptr, xf);
-		}
+#[no_mangle]
+pub extern fn BoxDebugDraw_DrawTransform(this: *mut BoxDebugDraw, xf: &Transform) {
+	unsafe {
+		(*this).draw_transform(xf);
 	}
 }
