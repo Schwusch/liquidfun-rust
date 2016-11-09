@@ -3,7 +3,7 @@
 
 extern "C" {
 
-	CppDebugDraw* DebugDraw_new(BoxDebugDraw* debugDraw) {
+	CppDebugDraw* CppDebugDraw_new(BoxDebugDraw* debugDraw) {
 		return new CppDebugDraw(debugDraw);
 	}
 
