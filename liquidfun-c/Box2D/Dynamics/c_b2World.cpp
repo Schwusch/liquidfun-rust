@@ -92,5 +92,9 @@ extern "C" {
         self->SetDebugDraw(debugDraw);
     }
 
+    void b2World_DrawDebugData(b2World* self) {
+        self->DrawDebugData();
+    }
+
 } // extern C
 

@@ -41,9 +41,9 @@ extern {
         max_motor_torque: Float32
     ) -> *mut joints::revolute_joint::B2RevoluteJoint;
 
-    fn b2World_SetDebugDraw(this: *mut B2World, debug_draw: *mut CppDebugDraw);
-
     fn CppDebugDraw_new(debug_draw: *mut BoxDebugDraw) -> *mut CppDebugDraw;
+    fn b2World_SetDebugDraw(this: *mut B2World, debug_draw: *mut CppDebugDraw);
+    fn b2World_DrawDebugData(this: *mut B2World);
 }
 
 pub enum CppDebugDraw {}
@@ -185,6 +185,13 @@ impl World {
     pub fn set_debug_draw(&mut self, debug_draw: &mut BoxDebugDraw) {
         unsafe {
             b2World_SetDebugDraw(self.ptr, CppDebugDraw_new(debug_draw));
+        }
+    }
+
+    /// Call this to draw shapes and other debug draw data. This is intentionally non-const.
+    pub fn draw_debug_data(&mut self) {
+        unsafe {
+            b2World_DrawDebugData(self.ptr);
         }
     }
 

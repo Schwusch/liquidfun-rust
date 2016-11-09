@@ -2,8 +2,8 @@
 
 use std::slice::from_raw_parts;
 
-use super::super::common::math::*;
-use super::super::common::settings::*;
+use super::math::*;
+use super::settings::*;
 
 /// Flags for specifying what to draw, using set_flags()
 #[repr(u32)]
