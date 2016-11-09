@@ -182,7 +182,7 @@ impl World {
     /// Register a routine for debug drawing. The debug draw functions are called
     /// inside with b2World::DrawDebugData method. The debug draw object is owned
     /// by you and must remain in scope.
-    pub fn set_debug_draw(&mut self, debug_draw: &mut BoxDebugDraw) {
+    pub fn set_debug_draw(&mut self, debug_draw: *mut BoxDebugDraw) {
         unsafe {
             b2World_SetDebugDraw(self.ptr, CppDebugDraw_new(debug_draw));
         }
