@@ -79,9 +79,7 @@ protected:
 extern "C" {
 #endif
 
-	CppDebugDraw* DebugDraw_new(BoxDebugDraw* debugDraw) {
-		return new CppDebugDraw(debugDraw);
-	}
+	CppDebugDraw* DebugDraw_new(BoxDebugDraw* debugDraw);
 
 #ifdef __cplusplus
 } // extern C
