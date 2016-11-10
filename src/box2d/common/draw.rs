@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use std::slice::from_raw_parts;
+use std::any::Any;
 
 use super::math::*;
 use super::settings::*;
@@ -41,93 +42,78 @@ pub struct ParticleColor { pub r: u8, pub g: u8, pub b: u8, pub a: u8 }
 /// Implement and register this trait with a World to provide debug drawing of physics
 /// using World.set_debug_draw()
 pub trait Draw {
-	fn set_flags(&mut self, flags: UInt32);
-	fn get_flags(&self) -> UInt32;
-	fn append_flags(&mut self, flags: UInt32);
-	fn clear_flags(&mut self, flags: UInt32);
+
+	/// Put this in your impl: fn as_any(&mut self) -> &mut Any { self }
+	fn as_any(&mut self) -> &mut Any;
+
+	/// Draw a closed polygon provided in CCW order.
 	fn draw_polygon(&mut self, vertices: &[Vec2], color: &Color);
+	
+	/// Draw a solid closed polygon provided in CCW order.
 	fn draw_solid_polygon(&mut self, vertices: &[Vec2], color: &Color);
+
+	/// Draw a circle.
 	fn draw_circle(&mut self, center: &Vec2, radius: f32, color: &Color);
+
+	/// Draw a solid circle.
 	fn draw_solid_circle(&mut self, center: &Vec2, radius: f32, axis: &Vec2, color: &Color);
+
+	/// Draw a particle array
 	fn draw_particles(&mut self, centers: &[Vec2], colors: &[ParticleColor], radius: f32);
+
+	/// Draw a line segment.
 	fn draw_segment(&mut self, p1: &Vec2, p2: &Vec2, color: &Color);
+
+	/// Draw a transform. Choose your own length scale.
 	fn draw_transform(&mut self, xf: &Transform);
 }
 
-pub type BoxDebugDraw = *mut Draw;
+pub type DrawTrait = Box<Draw>;
 
 #[no_mangle]
-pub extern fn BoxDebugDraw_SetFlags(this: *mut BoxDebugDraw, flags: UInt32) {
-	unsafe {
-		(**this).set_flags(flags);
-	}
-}
-
-#[no_mangle]
-pub extern fn BoxDebugDraw_GetFlags(this: *mut BoxDebugDraw) -> UInt32 {
-	unsafe {
-		(**this).get_flags()
-	}
-}
-
-#[no_mangle]
-pub extern fn BoxDebugDraw_AppendFlags(this: *mut BoxDebugDraw, flags: UInt32) {
-	unsafe {
-		(**this).append_flags(flags);
-	}
-}
-
-#[no_mangle]
-pub extern fn BoxDebugDraw_ClearFlags(this: *mut BoxDebugDraw, flags: UInt32) {
-	unsafe {
-		(**this).clear_flags(flags);
-	}
-}
-
-#[no_mangle]
-pub extern fn BoxDebugDraw_DrawPolygon(this: *mut BoxDebugDraw, vertices: *const Vec2, vertexCount: Int32, color: &Color) {
+pub extern fn DrawTrait_DrawPolygon(this: *mut DrawTrait, vertices: *const Vec2, vertexCount: Int32, color: &Color) {
 	unsafe {
 		(**this).draw_polygon(from_raw_parts(vertices, vertexCount as usize), color);
 	}
 }
 
 #[no_mangle]
-pub extern fn BoxDebugDraw_DrawSolidPolygon(this: *mut BoxDebugDraw, vertices: *const Vec2, vertexCount: Int32, color: &Color) {
+pub extern fn DrawTrait_DrawSolidPolygon(this: *mut DrawTrait, vertices: *const Vec2, vertexCount: Int32, color: &Color) {
 	unsafe {
 		(**this).draw_solid_polygon(from_raw_parts(vertices, vertexCount as usize), color);
 	}
 }
 
 #[no_mangle]
-pub extern fn BoxDebugDraw_DrawCircle(this: *mut BoxDebugDraw, center: &Vec2, radius: f32, color: &Color) {
+pub extern fn DrawTrait_DrawCircle(this: *mut DrawTrait, center: &Vec2, radius: f32, color: &Color) {
 	unsafe {
 		(**this).draw_circle(center, radius, color);
 	}
 }
 
 #[no_mangle]
-pub extern fn BoxDebugDraw_DrawSolidCircle(this: *mut BoxDebugDraw, center: &Vec2, radius: f32, axis: &Vec2, color: &Color) {
+pub extern fn DrawTrait_DrawSolidCircle(this: *mut DrawTrait, center: &Vec2, radius: f32, axis: &Vec2, color: &Color) {
 	unsafe {
 		(**this).draw_solid_circle(center, radius, axis, color);
 	}
 }
 
 #[no_mangle]
-pub extern fn BoxDebugDraw_DrawParticles(this: *mut BoxDebugDraw, centers: *const Vec2, radius: f32, colors: *const ParticleColor, count: Int32) {
+pub extern fn DrawTrait_DrawParticles(this: *mut DrawTrait, centers: *const Vec2, radius: f32, colors: *const ParticleColor, count: Int32) {
 	unsafe {
 		(**this).draw_particles(from_raw_parts(centers, count as usize), from_raw_parts(colors, count as usize), radius);
 	}
 }
 
 #[no_mangle]
-pub extern fn BoxDebugDraw_DrawSegment(this: *mut BoxDebugDraw, p1: &Vec2, p2: &Vec2, color: &Color) {
+pub extern fn DrawTrait_DrawSegment(this: *mut DrawTrait, p1: &Vec2, p2: &Vec2, color: &Color) {
 	unsafe {
 		(**this).draw_segment(p1, p2, color);
 	}
 }
 
 #[no_mangle]
-pub extern fn BoxDebugDraw_DrawTransform(this: *mut BoxDebugDraw, xf: &Transform) {
+pub extern fn DrawTrait_DrawTransform(this: *mut DrawTrait, xf: &Transform) {
 	unsafe {
 		(**this).draw_transform(xf);
 	}

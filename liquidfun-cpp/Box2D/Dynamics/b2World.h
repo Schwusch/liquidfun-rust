@@ -69,6 +69,10 @@ public:
 	/// by you and must remain in scope.
 	void SetDebugDraw(b2Draw* debugDraw);
 
+	/*b2Draw* GetDebugDraw() {
+		return m_debugDraw;
+	}*/
+
 	/// Create a rigid body given a definition. No reference to the definition
 	/// is retained.
 	/// @warning This function is locked during callbacks.

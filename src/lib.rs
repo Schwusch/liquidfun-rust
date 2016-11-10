@@ -51,6 +51,7 @@
 //! ```
 
 #![allow(renamed_and_removed_lints)]
+#![feature(box_syntax)]
 
 extern crate libc;
 #[macro_use]

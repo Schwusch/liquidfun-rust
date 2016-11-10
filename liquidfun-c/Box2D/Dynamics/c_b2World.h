@@ -39,6 +39,7 @@ extern "C" {
 	b2ParticleSystem* b2World_CreateParticleSystem(b2World* self, const b2ParticleSystemDef* def);
 	void b2World_Step(b2World* self, float32 timeStep, int32 velocityIterations, int32 positionIterations);
 	void b2World_SetDebugDraw(b2World* self, b2Draw* debugDraw);
+	// b2Draw* b2World_GetDebugDraw(b2World* self);
     void b2World_DrawDebugData(b2World* self);
 
 #ifdef __cplusplus
