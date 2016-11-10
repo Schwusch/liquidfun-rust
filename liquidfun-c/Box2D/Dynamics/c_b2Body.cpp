@@ -59,5 +59,13 @@ extern "C" {
 		self->ApplyLinearImpulse(impulse, point, wake);
 	}
 
+	const b2Vec2& b2Body_GetWorldCenter(const b2Body* self) {
+		return self->GetWorldCenter();
+	}
+
+	const b2Vec2& b2Body_GetLocalCenter(const b2Body* self) {
+		return self->GetLocalCenter();
+	}
+
 } // extern C
 
