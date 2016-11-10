@@ -17,6 +17,8 @@ extern "C" {
 	void b2Body_SetTransform(b2Body* self, const b2Vec2& position, float32 angle);
 	void b2Body_SetLinearVelocity(b2Body* self, const b2Vec2& v);
 	const b2Vec2& b2Body_GetLinearVelocity(const b2Body* self);
+	void b2Body_ApplyForceToCenter(b2Body* self, const b2Vec2& force, bool wake);
+	void b2Body_ApplyLinearImpulse(b2Body* self, const b2Vec2& impulse, const b2Vec2& point, bool wake);
 
 #ifdef __cplusplus
 } // extern C

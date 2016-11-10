@@ -51,5 +51,13 @@ extern "C" {
 		return self->GetLinearVelocity();
 	}
 
+	void b2Body_ApplyForceToCenter(b2Body* self, const b2Vec2& force, bool wake) {
+		self->ApplyForceToCenter(force, wake);
+	}
+
+	void b2Body_ApplyLinearImpulse(b2Body* self, const b2Vec2& impulse, const b2Vec2& point, bool wake) {
+		self->ApplyLinearImpulse(impulse, point, wake);
+	}
+
 } // extern C
 
