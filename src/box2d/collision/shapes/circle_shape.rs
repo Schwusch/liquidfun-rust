@@ -18,11 +18,6 @@ pub struct CircleShape {
     owned: bool,    
 }
 
-/// Cast a CircleShape from a B2Shape.
-pub fn from_shape(ptr: *mut B2Shape) -> CircleShape {
-    CircleShape { ptr: ptr as *mut B2CircleShape, owned: false}
-}
-
 impl Shape for CircleShape {
     // Is the up-cast even necessary? Can't we just use self.ptr directly?
     fn handle(&self) -> *mut B2Shape {
@@ -39,6 +34,11 @@ impl CircleShape {
         unsafe {
             CircleShape { ptr: b2CircleShape_New(), owned: true }
         }
+    }
+
+    /// Cast a CircleShape from a B2Shape.
+    pub fn from_shape(ptr: *mut B2Shape) -> CircleShape {
+        CircleShape { ptr: ptr as *mut B2CircleShape, owned: false}
     }
 
     pub fn set_position(&mut self, pos: &Vec2) {

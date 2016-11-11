@@ -24,11 +24,6 @@ pub struct PolygonShape {
     owned: bool,    
 }
 
-/// Cast a PolygonShape from a B2Shape.
-pub fn from_shape(ptr: *mut B2Shape) -> PolygonShape {
-    PolygonShape { ptr: ptr as *mut B2PolygonShape, owned: false}
-}
-
 impl Shape for PolygonShape {
     // Is the up-cast even necessary? Can't we just use self.ptr directly?
     fn handle(&self) -> *mut B2Shape {
@@ -45,6 +40,11 @@ impl PolygonShape {
         unsafe {
             PolygonShape { ptr: b2PolygonShape_New(), owned: true }
         }
+    }
+
+    /// Cast a PolygonShape from a B2Shape.
+    pub fn from_shape(ptr: *mut B2Shape) -> PolygonShape {
+        PolygonShape { ptr: ptr as *mut B2PolygonShape, owned: false}
     }
 
     /// Get a vertex by index.
