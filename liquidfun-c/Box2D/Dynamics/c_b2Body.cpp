@@ -71,5 +71,9 @@ extern "C" {
 		self->SetLinearDamping(linearDamping);
 	}
 
+	void b2Body_SetFixedRotation(b2Body* self, bool flag) {
+		self->SetFixedRotation(flag);
+	}
+
 } // extern C
 

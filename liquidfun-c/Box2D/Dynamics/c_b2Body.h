@@ -22,6 +22,7 @@ extern "C" {
 	const b2Vec2& b2Body_GetWorldCenter(const b2Body* self);
 	const b2Vec2& b2Body_GetLocalCenter(const b2Body* self);
 	void b2Body_SetLinearDamping(b2Body* self, float32 linearDamping);
+	void b2Body_SetFixedRotation(b2Body* self, bool flag);
 
 #ifdef __cplusplus
 } // extern C
