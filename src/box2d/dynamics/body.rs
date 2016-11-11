@@ -118,6 +118,7 @@ extern {
     fn b2Body_ApplyLinearImpulse(this: *const B2Body, impulse: &Vec2, point: &Vec2, wake: bool);
     fn b2Body_GetWorldCenter(this: *const B2Body) -> &Vec2;
     fn b2Body_GetLocalCenter(this: *const B2Body) -> &Vec2;
+    fn b2Body_SetLinearDamping(this: *mut B2Body, linear_damping: Float32);
 }
 
 /// A rigid body. These are created via b2World::CreateBody.
@@ -259,6 +260,12 @@ impl Body {
     pub fn get_local_center(&self) -> &Vec2 {
         unsafe {
             b2Body_GetLocalCenter(self.ptr)
+        }
+    }
+
+    pub fn set_linear_damping(&mut self, linear_damping: f32) {
+        unsafe {
+            b2Body_SetLinearDamping(self.ptr, linear_damping)
         }
     }
 }

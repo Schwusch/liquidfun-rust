@@ -21,6 +21,7 @@ extern "C" {
 	void b2Body_ApplyLinearImpulse(b2Body* self, const b2Vec2& impulse, const b2Vec2& point, bool wake);
 	const b2Vec2& b2Body_GetWorldCenter(const b2Body* self);
 	const b2Vec2& b2Body_GetLocalCenter(const b2Body* self);
+	void b2Body_SetLinearDamping(b2Body* self, float32 linearDamping);
 
 #ifdef __cplusplus
 } // extern C

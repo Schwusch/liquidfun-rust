@@ -67,5 +67,9 @@ extern "C" {
 		return self->GetLocalCenter();
 	}
 
+	void b2Body_SetLinearDamping(b2Body* self, float32 linearDamping) {
+		self->SetLinearDamping(linearDamping);
+	}
+
 } // extern C
 
