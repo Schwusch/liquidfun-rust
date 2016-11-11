@@ -59,7 +59,7 @@ protected:
 extern "C" {
 #endif
 
-	CppDebugDraw* CppDebugDraw_new(DrawTrait* debugDraw);
+	CppDebugDraw* CppDebugDraw_new(DrawTrait* self);
 	void CppDebugDraw_delete(CppDebugDraw* self);
 	void CppDebugDraw_SetFlags(CppDebugDraw* self, uint32 flags);
 	uint32 CppDebugDraw_GetFlags(CppDebugDraw* self);

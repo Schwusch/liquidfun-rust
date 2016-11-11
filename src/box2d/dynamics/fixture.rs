@@ -1,6 +1,8 @@
-use libc::size_t;
+use std::mem::transmute;
+use libc::{size_t, c_void};
 use super::super::collision::shapes::shape;
 use super::super::common::settings::*;
+use super::body::*;
 
 /// This holds contact filtering data.
 #[repr(C)]
@@ -77,6 +79,9 @@ extern {
     fn b2Fixture_GetNext(this: *mut B2Fixture) -> *mut B2Fixture;
     fn b2Fixture_GetShape(this: *mut B2Fixture) -> *mut shape::B2Shape;
     fn b2Fixture_GetType(this: *mut B2Fixture) -> shape::Type;
+    fn b2Fixture_GetUserData(this: *mut B2Fixture) -> *mut c_void;
+    fn b2Fixture_SetUserData(this: *mut B2Fixture, data: *mut c_void);
+    fn b2Fixture_GetBody(this: *mut B2Fixture) -> *mut B2Body;
 }
 
 /// A fixture is used to attach a shape to a body for collision detection. A fixture
@@ -125,4 +130,21 @@ impl Fixture {
         }        
     }
 
+    pub fn get_user_data(&mut self) -> size_t {
+        unsafe {
+            transmute(b2Fixture_GetUserData(self.ptr))
+        }
+    }
+
+    pub fn set_user_data(&mut self, data: size_t) {
+        unsafe {
+            b2Fixture_SetUserData(self.ptr, transmute(data));
+        }
+    }
+
+    pub fn get_body(&mut self) -> Body {
+        unsafe {
+            Body { ptr: b2Fixture_GetBody(self.ptr) }
+        }
+    }
 }

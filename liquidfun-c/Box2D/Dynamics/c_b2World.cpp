@@ -100,5 +100,9 @@ extern "C" {
         self->DrawDebugData();
     }
 
+    void b2World_SetContactListener(b2World* self, b2ContactListener* listener) {
+        self->SetContactListener(listener);
+    }
+
 } // extern C
 

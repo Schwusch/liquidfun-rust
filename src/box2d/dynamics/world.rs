@@ -8,6 +8,7 @@ use super::super::common::settings::*;
 use super::super::particle::particle_system::*;
 use super::joints;
 use super::super::common::draw::*;
+use super::worldcallbacks::*;
 
 pub enum B2World {}
 
@@ -46,6 +47,7 @@ extern {
 	fn b2World_SetDebugDraw(this: *mut B2World, debug_draw: *mut CppDebugDraw);
 	// fn b2World_GetDebugDraw(this: *mut B2World) -> *mut CppDebugDraw;
 	fn b2World_DrawDebugData(this: *mut B2World);
+	fn b2World_SetContactListener(this: *mut B2World, listener: *mut CppContactListener);
 }
 
 /// The world class manages all physics entities, dynamic simulation,
@@ -184,7 +186,7 @@ impl World {
 	/// by you and must remain in scope.
 	pub fn set_debug_draw<T: Draw + 'static>(&mut self, debug_draw: &mut DebugDraw<T>) {
 		unsafe {
-			b2World_SetDebugDraw(self.ptr, debug_draw.handle.ptr);
+			b2World_SetDebugDraw(self.ptr, debug_draw.ptr);
 		}
 	}
 
@@ -204,6 +206,12 @@ impl World {
 			b2World_DrawDebugData(self.ptr);
 		}
 	}
+
+	pub fn set_contact_listener<T: ContactListener + 'static>(&mut self, listener: &mut ContactListenerHandle<T>) {
+		unsafe {
+			b2World_SetContactListener(self.ptr, listener.ptr);
+		}
+	}
 }
 
 impl Drop for World {
@@ -214,10 +222,53 @@ impl Drop for World {
 	}
 }
 
+pub enum CppContactListener {}
+
+#[allow(improper_ctypes)]
+extern {
+	fn CppContactListener_new(this: *mut ContactListenerTrait) -> *mut CppContactListener;
+	fn CppContactListener_delete(this: *mut CppContactListener);
+}
+
+pub struct ContactListenerHandle<T: ContactListener + 'static> {
+	trait_obj: *mut ContactListenerTrait,
+	ptr: *mut CppContactListener,
+	phantom: PhantomData<T>,
+}
+
+impl<T: ContactListener + 'static> ContactListenerHandle<T> {
+	pub fn new(this: T) -> Self {
+		let trait_obj = Box::into_raw(box (box this as Box<ContactListener>));
+		Self {
+			trait_obj: trait_obj,
+			ptr: unsafe { CppContactListener_new(trait_obj) },
+			phantom: PhantomData,
+		}
+	}
+
+	/// Get direct access to your ContactListener instance.
+	pub fn get(&mut self) -> &mut T {
+		match unsafe { (*self.trait_obj).as_any().downcast_mut::<T>() } {
+			Some(x) => x,
+			None => panic!("invalid Box downcast")
+		}
+	}
+}
+
+impl<T: ContactListener + 'static> Drop for ContactListenerHandle<T> {
+	fn drop(&mut self) {
+		unsafe {
+			CppContactListener_delete(self.ptr);
+			drop(Box::from_raw(self.trait_obj));
+		}
+	}
+}
+
 pub enum CppDebugDraw {}
 
+#[allow(improper_ctypes)]
 extern {
-	fn CppDebugDraw_new(debug_draw: *mut DrawTrait) -> *mut CppDebugDraw;
+	fn CppDebugDraw_new(this: *mut DrawTrait) -> *mut CppDebugDraw;
 	fn CppDebugDraw_delete(this: *mut CppDebugDraw);
 	fn CppDebugDraw_SetFlags(this: *mut CppDebugDraw, flags: UInt32);
 	fn CppDebugDraw_GetFlags(this: *mut CppDebugDraw) -> UInt32;
@@ -225,80 +276,59 @@ extern {
 	fn CppDebugDraw_ClearFlags(this: *mut CppDebugDraw, flags: UInt32);
 }
 
-struct CppDebugDrawHandle {
-	draw_trait: *mut DrawTrait,
-	ptr: *mut CppDebugDraw,
-}
-
-impl CppDebugDrawHandle {
-	pub fn new(debug_draw: *mut DrawTrait) -> Self {
-		unsafe {
-			Self {
-				draw_trait: debug_draw,
-				ptr: CppDebugDraw_new(debug_draw)
-			}
-		}
-	}
-}
-
-impl Drop for CppDebugDrawHandle {
-	fn drop(&mut self) {
-		unsafe {
-			CppDebugDraw_delete(self.ptr);
-		}
-	}
-}
-
 /// Call DebugDraw::new() to create a new DebugDraw instance from an instance of your type
 /// that implements the Draw trait and pass this to World::set_debug_draw()
 pub struct DebugDraw<T: Draw + 'static> {
-	handle: CppDebugDrawHandle,
+	trait_obj: *mut DrawTrait,
+	ptr: *mut CppDebugDraw,
 	phantom: PhantomData<T>,
 }
 
 impl<T: Draw + 'static> DebugDraw<T> {
 
 	/// Creates a new DebugDraw instance.
-	pub fn new(debug_draw: T) -> Self {
+	pub fn new(this: T) -> Self {
+		let trait_obj = Box::into_raw(box (box this as Box<Draw>));
 		Self {
-			handle: CppDebugDrawHandle::new(Box::into_raw(box (box debug_draw as Box<Draw>))),
+			trait_obj: trait_obj,
+			ptr: unsafe { CppDebugDraw_new(trait_obj) },
 			phantom: PhantomData,
 		}
 	}
 
 	/// Get direct access to your Draw instance.
 	pub fn get(&mut self) -> &mut T {
-		match unsafe { (*self.handle.draw_trait).as_any().downcast_mut::<T>() } {
+		match unsafe { (*self.trait_obj).as_any().downcast_mut::<T>() } {
 			Some(x) => x,
-			None => panic!("invalid downcast of Box<Draw> to Box<T> where T: Draw")
+			None => panic!("invalid Box downcast")
 		}
 	}
 
 	/// Set the drawing flags.
 	pub fn set_flags(&mut self, flags: u32) {
 		unsafe {
-			CppDebugDraw_SetFlags(self.handle.ptr, flags);
+			CppDebugDraw_SetFlags(self.ptr, flags);
 		}
 	}
 
 	/// Get the drawing flags.
 	pub fn get_flags(&mut self) -> u32 {
 		unsafe {
-			CppDebugDraw_GetFlags(self.handle.ptr)
+			CppDebugDraw_GetFlags(self.ptr)
 		}
 	}
 
 	/// Append flags to the current flags.
 	pub fn append_flags(&mut self, flags: u32) {
 		unsafe {
-			CppDebugDraw_AppendFlags(self.handle.ptr, flags);
+			CppDebugDraw_AppendFlags(self.ptr, flags);
 		}
 	}
 
 	/// Clear flags from the current flags.
 	pub fn clear_flags(&mut self, flags: u32) {
 		unsafe {
-			CppDebugDraw_ClearFlags(self.handle.ptr, flags);
+			CppDebugDraw_ClearFlags(self.ptr, flags);
 		}
 	}
 }
@@ -306,7 +336,8 @@ impl<T: Draw + 'static> DebugDraw<T> {
 impl<T: Draw + 'static> Drop for DebugDraw<T> {
 	fn drop(&mut self) {
 		unsafe {
-			drop(Box::from_raw(self.handle.draw_trait));
+			CppDebugDraw_delete(self.ptr);
+			drop(Box::from_raw(self.trait_obj));
 		}
 	}
 }

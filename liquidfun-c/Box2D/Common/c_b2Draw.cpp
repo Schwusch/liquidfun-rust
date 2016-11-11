@@ -3,12 +3,12 @@
 
 extern "C" {
 
-	CppDebugDraw* CppDebugDraw_new(DrawTrait* debugDraw) {
-		return new CppDebugDraw(debugDraw);
+	CppDebugDraw* CppDebugDraw_new(DrawTrait* self) {
+		return new CppDebugDraw(self);
 	}
 
-	void CppDebugDraw_delete(CppDebugDraw* debugDraw) {
-		delete debugDraw;
+	void CppDebugDraw_delete(CppDebugDraw* self) {
+		delete self;
 	}
 
 	void CppDebugDraw_SetFlags(CppDebugDraw* self, uint32 flags) {

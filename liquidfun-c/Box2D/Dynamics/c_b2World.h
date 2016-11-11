@@ -41,6 +41,7 @@ extern "C" {
 	void b2World_SetDebugDraw(b2World* self, b2Draw* debugDraw);
 	// b2Draw* b2World_GetDebugDraw(b2World* self);
     void b2World_DrawDebugData(b2World* self);
+	void b2World_SetContactListener(b2World* self, b2ContactListener* listener);
 
 #ifdef __cplusplus
 } // extern C
