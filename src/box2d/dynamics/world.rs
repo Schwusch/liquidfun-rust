@@ -8,7 +8,7 @@ use super::super::common::settings::*;
 use super::super::particle::particle_system::*;
 use super::joints;
 use super::super::common::draw::*;
-use super::worldcallbacks::*;
+use super::world_callbacks::*;
 
 pub enum B2World {}
 

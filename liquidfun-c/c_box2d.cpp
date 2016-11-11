@@ -56,6 +56,7 @@
 
 #include "Box2D/Collision/Shapes/c_b2ChainShape.cpp"
 #include "Box2D/Collision/Shapes/c_b2PolygonShape.cpp"
+#include "Box2D/Collision/Shapes/c_b2CircleShape.cpp"
 #include "Box2D/Common/c_b2Math.cpp"
 #include "Box2D/Common/c_b2Draw.cpp"
 #include "Box2D/Dynamics/c_b2WorldCallbacks.cpp"
