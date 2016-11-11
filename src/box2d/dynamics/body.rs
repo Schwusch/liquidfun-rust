@@ -120,6 +120,7 @@ extern {
     fn b2Body_GetLocalCenter(this: *const B2Body) -> &Vec2;
     fn b2Body_SetLinearDamping(this: *mut B2Body, linear_damping: Float32);
     fn b2Body_SetFixedRotation(this: *mut B2Body, flag: bool);
+    fn b2Body_GetMass(this: *const B2Body) -> Float32;
 }
 
 /// A rigid body. These are created via b2World::CreateBody.
@@ -273,6 +274,12 @@ impl Body {
     pub fn set_fixed_rotation(&mut self, flag: bool) {
         unsafe {
             b2Body_SetFixedRotation(self.ptr, flag)
+        }
+    }
+
+    pub fn get_mass(&self) -> f32 {
+        unsafe {
+            b2Body_GetMass(self.ptr)
         }
     }
 }

@@ -75,5 +75,9 @@ extern "C" {
 		self->SetFixedRotation(flag);
 	}
 
+	float32 b2Body_GetMass(const b2Body* self) {
+		return self->GetMass();
+	}
+
 } // extern C
 
