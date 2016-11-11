@@ -130,13 +130,13 @@ impl Fixture {
         }        
     }
 
-    pub fn get_user_data(&mut self) -> size_t {
+    pub fn get_user_data(&mut self) -> usize {
         unsafe {
             transmute(b2Fixture_GetUserData(self.ptr))
         }
     }
 
-    pub fn set_user_data(&mut self, data: size_t) {
+    pub fn set_user_data(&mut self, data: usize) {
         unsafe {
             b2Fixture_SetUserData(self.ptr, transmute(data));
         }

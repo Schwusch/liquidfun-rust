@@ -31,6 +31,10 @@ extern "C" {
 		return self->GetUserData();
 	}
 
+	void b2Body_SetUserData(b2Body* self, void* data) {
+		return self->SetUserData(data);
+	}
+
 	b2World* b2Body_GetWorld(b2Body* self) {
 		return self->GetWorld();
 	}

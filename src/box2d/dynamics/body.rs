@@ -1,4 +1,4 @@
-use libc::size_t;
+use libc::{size_t, c_void};
 use std::mem::transmute;
 use super::fixture::*;
 use super::super::collision::shapes::shape::*;
@@ -109,6 +109,7 @@ extern {
     fn b2Body_GetNext(this: *mut B2Body) -> *mut B2Body;
     fn b2Body_GetPosition(this: *const B2Body) -> &Vec2;
     fn b2Body_GetUserData(this: *const B2Body) -> usize;
+    fn b2Body_SetUserData(this: *mut B2Body, data: *mut c_void);
     fn b2Body_GetWorld(this: *const B2Body) -> *mut B2World;
     fn b2Body_GetLocalPoint(this: *const B2Body, worldPoint: &Vec2) -> Vec2;
     fn b2Body_SetTransform(this: *mut B2Body, position: &Vec2, angle: Float32);
@@ -207,6 +208,12 @@ impl Body {
     pub fn get_user_data(&self) -> usize {
         unsafe {
             b2Body_GetUserData(self.ptr)
+        }
+    }
+
+    pub fn set_user_data(&mut self, data: usize) {
+        unsafe {
+            b2Body_SetUserData(self.ptr, transmute(data));
         }
     }
 
