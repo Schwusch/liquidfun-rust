@@ -90,7 +90,7 @@ extern {
 /// Fixtures are created via b2Body::CreateFixture.
 /// @warning you cannot reuse fixtures.
 #[allow(raw_pointer_derive)]
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Fixture {
     pub ptr: *mut B2Fixture
 }
