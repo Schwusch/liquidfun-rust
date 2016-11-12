@@ -1,5 +1,12 @@
 use super::super::common::settings::*;
 
+/// Small color object for each particle
+/// Four elements: r (red), g (green), b (blue), and a (opacity).
+/// Each element can be specified 0 to 255.
+#[repr(C)]
+#[derive(new, Debug, Default, Copy, Clone, PartialEq, Eq, Hash)]
+pub struct ParticleColor { pub r: u8, pub g: u8, pub b: u8, pub a: u8 }
+
 pub enum B2ParticleColor {}
 
 extern {
@@ -13,24 +20,22 @@ extern {
 /// Small color object for each particle
 #[allow(raw_pointer_derive)]
 #[derive(Clone)]
-pub struct ParticleColor {
+pub struct ParticleColorHandle {
 	pub ptr: *mut B2ParticleColor
 }
 
-impl ParticleColor {
+impl ParticleColorHandle {
 
-    /// Constructor with four elements: r (red), g (green), b (blue), and a
-    /// (opacity).
-    /// Each element can be specified 0 to 255.
-    pub fn new(r: UInt8, g: UInt8, b: UInt8, a: UInt8) -> ParticleColor {
+    /// Construct a new ParticleColorHandle from a ParticleColor
+    pub fn new(c: &ParticleColor) -> ParticleColorHandle {
         unsafe {
-            ParticleColor { ptr: b2ParticleColor_New(r, g, b, a) }
+            ParticleColorHandle { ptr: b2ParticleColor_New(c.r, c.g, c.b, c.a) }
         }
     }
 
-    /// Create a ParticleColor with zero values.
-	pub fn zero() -> ParticleColor {
-		ParticleColor::new(0, 0, 0, 0)
+    /// Create a ParticleColorHandle with zero values.
+	pub fn zero() -> ParticleColorHandle {
+		ParticleColorHandle::new(&ParticleColor::default())
 	}
 
     /// True when all four color elements equal 0. When true, a particle color
@@ -41,7 +46,7 @@ impl ParticleColor {
         }
     }
 
-    /// Get ParticleColor's raw pointer.
+    /// Get ParticleColorHandle's raw pointer.
 	pub fn ptr(&self) -> *mut B2ParticleColor {
 		self.ptr
 	}
@@ -55,7 +60,7 @@ impl ParticleColor {
 
 }
 
-impl Drop for ParticleColor {
+impl Drop for ParticleColorHandle {
     fn drop(&mut self) {
         unsafe {
             b2ParticleColor_Delete(self.ptr);

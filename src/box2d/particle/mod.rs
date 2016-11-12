@@ -91,7 +91,7 @@ pub struct ParticleDef {
 	pub velocity: Vec2,
 
 	/// The color of the particle.
- 	pub color: ParticleColor,
+ 	pub color: ParticleColorHandle,
 
 	/// Lifetime of the particle in seconds.  A value <= 0.0f indicates a
 	/// particle with infinite lifetime.
@@ -110,7 +110,7 @@ impl Default for ParticleDef {
 			flags: ParticleFlags::empty(),
 			position: Vec2::zero(),
 			velocity: Vec2::zero(),
-			color: ParticleColor::zero(),
+			color: ParticleColorHandle::zero(),
 			lifetime: 0.0,
 			user_data: 0,
 			group: None,

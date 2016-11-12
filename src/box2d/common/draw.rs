@@ -5,6 +5,7 @@ use std::any::Any;
 
 use super::math::*;
 use super::settings::*;
+use super::super::particle::particle_color::ParticleColor;
 
 /// Flags for specifying what to draw, using set_flags()
 #[repr(u32)]
@@ -33,11 +34,6 @@ pub enum DrawFlags {
 #[repr(C)]
 #[derive(Debug, Default, Copy, Clone, PartialEq)]
 pub struct Color { pub r: f32, pub g: f32, pub b: f32 }
-
-/// Small color object for each particle
-#[repr(C)]
-#[derive(Debug, Default, Copy, Clone, PartialEq, Eq, Hash)]
-pub struct ParticleColor { pub r: u8, pub g: u8, pub b: u8, pub a: u8 }
 
 /// Implement and register this trait with a World to provide debug drawing of physics
 /// using World.set_debug_draw()

@@ -51,11 +51,13 @@
 //! ```
 
 #![allow(renamed_and_removed_lints)]
-#![feature(box_syntax)]
+#![feature(box_syntax, proc_macro)]
 
 extern crate libc;
 #[macro_use]
 extern crate bitflags;
+#[macro_use]
+extern crate derive_new;
 
 pub mod box2d;
 pub mod ext;
