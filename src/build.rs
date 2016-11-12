@@ -10,6 +10,12 @@ fn main() {
 	    .file("liquidfun-c/c_box2d.cpp")
 	    .include("liquidfun-cpp");
 
+	if env::var("DEBUG").is_err() {
+		config.define("NDEBUG", None);
+	} else {
+		config.define("DEBUG", None);
+	}
+
 	// Include stlport if targeting Android.
 	// http://stackoverflow.com/questions/23000748/arm-linux-androideabi-stl-compile-error
     match env::var("TARGET") {

@@ -77,7 +77,7 @@ impl World {
 		}
 	}
 
-	pub fn destroy_body(&mut self, body: &Body) {
+	pub fn destroy_body(&mut self, body: &mut Body) {
 		unsafe {
 			b2World_DestroyBody(self.ptr, body.ptr);
 		}
