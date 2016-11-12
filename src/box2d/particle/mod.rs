@@ -11,6 +11,7 @@ use super::common::settings::*;
 
 bitflags! {
 	/// The particle type. Can be combined with the | operator.
+    #[repr(C)]
     pub flags ParticleFlags: UInt32 {
 		/// Water particle.
 		const WATER_PARTICLE = 0,

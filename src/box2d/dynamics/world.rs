@@ -312,30 +312,30 @@ impl<T: Draw + 'static> DebugDraw<T> {
 	}
 
 	/// Set the drawing flags.
-	pub fn set_flags(&mut self, flags: u32) {
+	pub fn set_flags(&mut self, flags: DrawFlags) {
 		unsafe {
-			CppDebugDraw_SetFlags(self.ptr, flags);
+			CppDebugDraw_SetFlags(self.ptr, flags.bits());
 		}
 	}
 
 	/// Get the drawing flags.
-	pub fn get_flags(&mut self) -> u32 {
+	pub fn get_flags(&mut self) -> DrawFlags {
 		unsafe {
-			CppDebugDraw_GetFlags(self.ptr)
+			DrawFlags::from_bits(CppDebugDraw_GetFlags(self.ptr)).unwrap()
 		}
 	}
 
 	/// Append flags to the current flags.
-	pub fn append_flags(&mut self, flags: u32) {
+	pub fn append_flags(&mut self, flags: DrawFlags) {
 		unsafe {
-			CppDebugDraw_AppendFlags(self.ptr, flags);
+			CppDebugDraw_AppendFlags(self.ptr, flags.bits());
 		}
 	}
 
 	/// Clear flags from the current flags.
-	pub fn clear_flags(&mut self, flags: u32) {
+	pub fn clear_flags(&mut self, flags: DrawFlags) {
 		unsafe {
-			CppDebugDraw_ClearFlags(self.ptr, flags);
+			CppDebugDraw_ClearFlags(self.ptr, flags.bits());
 		}
 	}
 }

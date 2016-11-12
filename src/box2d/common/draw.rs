@@ -7,27 +7,28 @@ use super::math::*;
 use super::settings::*;
 use super::super::particle::particle_color::ParticleColor;
 
-/// Flags for specifying what to draw, using set_flags()
-#[repr(u32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum DrawFlags {
-	/// draw shapes
-	ShapeBit        = 0x0001,
-	
-	/// draw joint connections
-	JointBit        = 0x0002,
+bitflags! {
+	/// Flags for specifying what to draw, using set_flags()
+	#[repr(C)]
+	pub flags DrawFlags: UInt32 {
+		/// draw shapes
+		const SHAPE          = 0x0001,
+		
+		/// draw joint connections
+		const JOINT          = 0x0002,
 
-	/// draw axis aligned bounding boxes
-	AabbBit         = 0x0004,
+		/// draw axis aligned bounding boxes
+		const AABB           = 0x0004,
 
-	/// draw broad-phase pairs
-	PairBit	        = 0x0008,
+		/// draw broad-phase pairs
+		const PAIR           = 0x0008,
 
-	/// draw center of mass frame
-	CenterOfMassBit	= 0x0010,
+		/// draw center of mass frame
+		const CENTER_OF_MASS = 0x0010,
 
-	/// draw particles
-	ParticleBit     = 0x0020,
+		/// draw particles
+		const PARTICLE       = 0x0020,
+	}
 }
 
 /// Color for debug drawing. Each value has the range [0,1].
