@@ -126,7 +126,7 @@ extern {
 
 /// A rigid body. These are created via b2World::CreateBody.
 #[allow(raw_pointer_derive)]
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Body {
 	pub ptr: *mut B2Body
 }
