@@ -401,6 +401,6 @@ impl<T: QueryCallback + 'static> Drop for QueryCallbackHandle<T> {
 #[repr(C)]
 #[derive(new, Debug, Default, Copy, Clone)]
 pub struct AABB {
-	lower_bound: Vec2,
-	upper_bound: Vec2,
+	pub lower_bound: Vec2,
+	pub upper_bound: Vec2,
 }
