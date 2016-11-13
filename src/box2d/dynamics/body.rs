@@ -140,7 +140,7 @@ impl Body {
     /// Contacts are not created until the next time step.
     /// @param def the fixture definition.
     /// @warning This function is locked during callbacks.
-    pub fn create_fixture(&self, def: &FixtureDef) -> Fixture {
+    pub fn create_fixture(&mut self, def: &FixtureDef) -> Fixture {
         unsafe {
             Fixture { ptr: b2Body_CreateFixture(self.ptr, transmute(def)) }
         }
@@ -153,7 +153,7 @@ impl Body {
     /// @param shape the shape to be cloned.
     /// @param density the shape density (set to zero for static bodies).
     /// @warning This function is locked during callbacks.
-    pub fn create_fixture_from_shape(&self, shape: &Shape, density: f32) -> Fixture {
+    pub fn create_fixture_from_shape(&mut self, shape: &Shape, density: f32) -> Fixture {
         unsafe {
             Fixture { ptr: b2Body_CreateFixture_FromShape(self.ptr, shape.handle(), density) }
         }

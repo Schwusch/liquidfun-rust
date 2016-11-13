@@ -11,4 +11,12 @@ extern "C" {
 		delete self;
 	}
 
+	CppQueryCallback* CppQueryCallback_new(QueryCallbackTrait* self) {
+		return new CppQueryCallback(self);
+	}
+
+	void CppQueryCallback_delete(CppQueryCallback* self) {
+		delete self;
+	}
+
 } // extern C

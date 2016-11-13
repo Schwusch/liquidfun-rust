@@ -108,5 +108,9 @@ extern "C" {
         self->SetContactListener(listener);
     }
 
+    void b2World_QueryAABB(const b2World* self, b2QueryCallback* callback, const b2AABB& aabb) {
+        self->QueryAABB(callback, aabb);
+    }
+
 } // extern C
 

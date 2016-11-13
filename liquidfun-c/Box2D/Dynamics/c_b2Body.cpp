@@ -39,7 +39,7 @@ extern "C" {
 		return self->GetWorld();
 	}
 
-	const b2Vec2& b2Body_GetLocalPoint(const b2Body* self, const b2Vec2& worldPoint) {
+	b2Vec2 b2Body_GetLocalPoint(const b2Body* self, const b2Vec2& worldPoint) {
 		return self->GetLocalPoint(worldPoint);
 	}
 

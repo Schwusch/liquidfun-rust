@@ -2,6 +2,7 @@
 #define C_B2_WORLD_CALLBACKS_H
 
 struct ContantListenerTrait {};
+struct QueryCallbackTrait {};
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,6 +10,7 @@ extern "C" {
 
 	void ContantListenerTrait_BeginContact(ContantListenerTrait* self, b2Contact* contact);
 	void ContantListenerTrait_EndContact(ContantListenerTrait* self, b2Contact* contact);
+	bool QueryCallbackTrait_ReportFixture(QueryCallbackTrait* self, b2Fixture* fixture);
 
 #ifdef __cplusplus
 } // extern C
@@ -20,10 +22,14 @@ public:
 	CppContactListener(ContantListenerTrait* self): self(self) {}
 
 	/// Called when two fixtures begin to touch.
-	virtual void BeginContact(b2Contact* contact) { ContantListenerTrait_BeginContact(self, contact); }
+	virtual void BeginContact(b2Contact* contact) {
+		ContantListenerTrait_BeginContact(self, contact);
+	}
 
 	/// Called when two fixtures cease to touch.
-	virtual void EndContact(b2Contact* contact) { ContantListenerTrait_EndContact(self, contact); }
+	virtual void EndContact(b2Contact* contact) {
+		ContantListenerTrait_EndContact(self, contact);
+	}
 
 	/// Called when a fixture and particle start touching if the
 	/// b2_fixtureContactFilterParticle flag is set on the particle.
@@ -90,8 +96,44 @@ public:
 		B2_NOT_USED(contact);
 		B2_NOT_USED(impulse);
 	}
+
 protected:
 	ContantListenerTrait* self;
+};
+
+class CppQueryCallback : public b2QueryCallback {
+public:
+	CppQueryCallback(QueryCallbackTrait* self): self(self) {}
+
+	/// Called for each fixture found in the query AABB.
+	/// @return false to terminate the query.
+	virtual bool ReportFixture(b2Fixture* fixture) {
+		return QueryCallbackTrait_ReportFixture(self, fixture);
+	}
+
+	/// Called for each particle found in the query AABB.
+	/// @return false to terminate the query.
+	virtual bool ReportParticle(const b2ParticleSystem* particleSystem,
+								int32 index)
+	{
+		B2_NOT_USED(particleSystem);
+		B2_NOT_USED(index);
+		return false;
+	}
+
+	/// Cull an entire particle system from b2World::QueryAABB. Ignored for
+	/// b2ParticleSystem::QueryAABB.
+	/// @return true if you want to include particleSystem in the AABB query,
+	/// or false to cull particleSystem from the AABB query.
+	virtual bool ShouldQueryParticleSystem(
+		const b2ParticleSystem* particleSystem)
+	{
+		B2_NOT_USED(particleSystem);
+		return false;
+	}
+
+protected:
+	QueryCallbackTrait* self;
 };
 
 #ifdef __cplusplus
@@ -100,6 +142,8 @@ extern "C" {
 
 	CppContactListener* CppContactListener_new(ContantListenerTrait* self);
 	void CppContactListener_delete(CppContactListener* self);
+	CppQueryCallback* CppQueryCallback_new(QueryCallbackTrait* self);
+	void CppQueryCallback_delete(CppQueryCallback* self);
 
 #ifdef __cplusplus
 } // extern C

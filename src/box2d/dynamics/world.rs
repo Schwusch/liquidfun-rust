@@ -49,6 +49,7 @@ extern {
 	// fn b2World_GetDebugDraw(this: *mut B2World) -> *mut CppDebugDraw;
 	fn b2World_DrawDebugData(this: *mut B2World);
 	fn b2World_SetContactListener(this: *mut B2World, listener: *mut CppContactListener);
+	fn b2World_QueryAABB(this: *const B2World, callback: *mut CppQueryCallback, aabb: &AABB);
 }
 
 /// The world class manages all physics entities, dynamic simulation,
@@ -219,6 +220,12 @@ impl World {
 			b2World_SetContactListener(self.ptr, listener.ptr);
 		}
 	}
+
+	pub fn query_aabb<T: QueryCallback + 'static>(&mut self, callback: &mut QueryCallbackHandle<T>, aabb: &AABB) {
+		unsafe {
+			b2World_QueryAABB(self.ptr, callback.ptr, aabb);
+		}
+	}
 }
 
 impl Drop for World {
@@ -347,4 +354,53 @@ impl<T: Draw + 'static> Drop for DebugDraw<T> {
 			drop(Box::from_raw(self.trait_obj));
 		}
 	}
+}
+
+pub enum CppQueryCallback {}
+
+#[allow(improper_ctypes)]
+extern {
+	fn CppQueryCallback_new(this: *mut QueryCallbackTrait) -> *mut CppQueryCallback;
+	fn CppQueryCallback_delete(this: *mut CppQueryCallback);
+}
+
+pub struct QueryCallbackHandle<T: QueryCallback + 'static> {
+	trait_obj: *mut QueryCallbackTrait,
+	ptr: *mut CppQueryCallback,
+	phantom: PhantomData<T>,
+}
+
+impl<T: QueryCallback + 'static> QueryCallbackHandle<T> {
+	pub fn new(this: T) -> Self {
+		let trait_obj = Box::into_raw(box (box this as Box<QueryCallback>));
+		Self {
+			trait_obj: trait_obj,
+			ptr: unsafe { CppQueryCallback_new(trait_obj) },
+			phantom: PhantomData,
+		}
+	}
+
+	/// Get direct access to your QueryCallback instance.
+	pub fn get(&mut self) -> &mut T {
+		match unsafe { (*self.trait_obj).as_any().downcast_mut::<T>() } {
+			Some(x) => x,
+			None => panic!("invalid Box downcast")
+		}
+	}
+}
+
+impl<T: QueryCallback + 'static> Drop for QueryCallbackHandle<T> {
+	fn drop(&mut self) {
+		unsafe {
+			CppQueryCallback_delete(self.ptr);
+			drop(Box::from_raw(self.trait_obj));
+		}
+	}
+}
+
+#[repr(C)]
+#[derive(new, Debug, Default, Copy, Clone)]
+pub struct AABB {
+	lower_bound: Vec2,
+	upper_bound: Vec2,
 }
