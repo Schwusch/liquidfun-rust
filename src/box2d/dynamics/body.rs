@@ -122,6 +122,7 @@ extern {
     fn b2Body_SetLinearDamping(this: *mut B2Body, linear_damping: Float32);
     fn b2Body_SetFixedRotation(this: *mut B2Body, flag: bool);
     fn b2Body_GetMass(this: *const B2Body) -> Float32;
+    fn b2Body_DestroyFixture(this: *mut B2Body, fixture: *mut B2Fixture);
 }
 
 /// A rigid body. These are created via b2World::CreateBody.
@@ -287,6 +288,12 @@ impl Body {
     pub fn get_mass(&self) -> f32 {
         unsafe {
             b2Body_GetMass(self.ptr)
+        }
+    }
+
+    pub fn destroy_fixture(&mut self, fixture: &mut Fixture) {
+        unsafe {
+            b2Body_DestroyFixture(self.ptr, fixture.ptr)
         }
     }
 }

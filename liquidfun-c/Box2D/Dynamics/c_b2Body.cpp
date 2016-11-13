@@ -83,5 +83,9 @@ extern "C" {
 		return self->GetMass();
 	}
 
+	void b2Body_DestroyFixture(b2Body* self, b2Fixture* fixture) {
+		self->DestroyFixture(fixture);
+	}
+
 } // extern C
 
