@@ -31,14 +31,14 @@ pub extern fn ContantListenerTrait_EndContact(this: *mut ContactListenerTrait, c
 pub trait QueryCallback {
 	/// Put this in your impl: fn as_any(&mut self) -> &mut Any { self }
 	fn as_any(&mut self) -> &mut Any;
-	fn report_fixture(&mut self, fixture: &mut Fixture);
+	fn report_fixture(&mut self, fixture: &mut Fixture) -> bool;
 }
 
 pub type QueryCallbackTrait = Box<QueryCallback>;
 
 #[no_mangle]
-pub extern fn QueryCallbackTrait_ReportFixture(this: *mut QueryCallbackTrait, fixture: *mut B2Fixture) {
+pub extern fn QueryCallbackTrait_ReportFixture(this: *mut QueryCallbackTrait, fixture: *mut B2Fixture) -> bool{
 	unsafe {
-		(*this).report_fixture(&mut Fixture { ptr: fixture });
+		(*this).report_fixture(&mut Fixture { ptr: fixture })
 	}
 }
