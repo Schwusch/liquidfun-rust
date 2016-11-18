@@ -16,4 +16,4 @@ gcc = "0.3"
 [dependencies]
 bitflags = "0.7"
 libc = "0.2"
-derive-new = "0.2"
+derive-new = { git = 'https://github.com/nrc/derive-new' }
