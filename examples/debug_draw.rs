@@ -4,9 +4,6 @@ use std::any::Any;
 extern crate libc;
 extern crate liquidfun;
 
-#[macro_use]
-extern crate bitflags;
-
 use liquidfun::box2d::collision::shapes::polygon_shape::*;
 use liquidfun::box2d::common::math::*;
 use liquidfun::box2d::dynamics::body::*;
@@ -69,7 +66,7 @@ fn main() {
 	let mut debug_draw = DebugDraw::new(MyDebugDraw::new());
 	debug_draw.get().scale = 10.;
 	world.set_debug_draw(&mut debug_draw);
-	debug_draw.set_flags(DrawFlags::SHAPE);
+	//debug_draw.set_flags(DrawFlags::SHAPE);
 
 	world.draw_debug_data();
 

@@ -28,7 +28,7 @@ fn create_revolute_joint() {
 	jd.1.motor_speed = 1.0;
 	jd.1.max_motor_torque = 1e7;
 	jd.1.enable_motor = true;
-	let joint = world.create_revolute_joint(&jd);
+	world.create_revolute_joint(&jd);
 
 	assert_eq!(world.get_joint_count(), 1);
 }

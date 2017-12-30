@@ -9,7 +9,6 @@ use liquidfun::box2d::common::math::*;
 use liquidfun::box2d::dynamics::body::*;
 use liquidfun::box2d::dynamics::fixture::*;
 use liquidfun::box2d::dynamics::world::*;
-use liquidfun::box2d::common::draw::*;
 use liquidfun::box2d::dynamics::contacts::contact::*;
 use liquidfun::box2d::dynamics::world_callbacks::*;
 
