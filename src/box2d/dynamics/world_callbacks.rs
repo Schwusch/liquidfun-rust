@@ -39,6 +39,6 @@ pub type QueryCallbackTrait = Box<QueryCallback>;
 #[no_mangle]
 pub extern fn QueryCallbackTrait_ReportFixture(this: *mut QueryCallbackTrait, fixture: *mut B2Fixture) -> bool{
 	unsafe {
-		(*this).report_fixture(&mut Fixture { ptr: fixture })
+		(*this).report_fixture(&mut Fixture { masked_ptr: fixture as usize })
 	}
 }

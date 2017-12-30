@@ -20,13 +20,13 @@ pub struct Contact {
 impl Contact {
     pub fn get_fixture_a(&mut self) -> Fixture {
         unsafe {
-            Fixture { ptr: b2Contact_GetFixtureA(self.ptr) }
+            Fixture { masked_ptr: b2Contact_GetFixtureA(self.ptr) as usize}
         }
     }
 
     pub fn get_fixture_b(&mut self) -> Fixture {
         unsafe {
-            Fixture { ptr: b2Contact_GetFixtureB(self.ptr) }
+            Fixture { masked_ptr: b2Contact_GetFixtureB(self.ptr) as usize }
         }
     }
 }

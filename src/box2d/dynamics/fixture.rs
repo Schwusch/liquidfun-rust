@@ -92,7 +92,7 @@ extern {
 #[allow(raw_pointer_derive)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Fixture {
-    pub ptr: *mut B2Fixture
+    pub masked_ptr: usize
 }
 
 impl Fixture {
@@ -101,7 +101,7 @@ impl Fixture {
     /// @return the shape type.
     pub fn get_type(&self) -> shape::Type {
         unsafe {
-            b2Fixture_GetType(self.ptr)
+            b2Fixture_GetType(self.get_ptr())
         }
     }
 
@@ -110,7 +110,7 @@ impl Fixture {
     /// Manipulating the shape may lead to non-physical behavior.
     pub fn get_shape(&self) -> *mut shape::B2Shape {
         unsafe {
-            return b2Fixture_GetShape(self.ptr);
+            return b2Fixture_GetShape(self.get_ptr());
         }
     }    
 
@@ -120,31 +120,37 @@ impl Fixture {
         let ptr: *mut B2Fixture;
         
         unsafe {
-            ptr = b2Fixture_GetNext(self.ptr);
+            ptr = b2Fixture_GetNext(self.get_ptr());
         }
 
         if ptr.is_null() {
             None
         } else {
-            Some(Fixture { ptr: ptr })
+            Some(Fixture { masked_ptr: ptr as usize })
         }        
     }
 
+
     pub fn get_user_data(&mut self) -> usize {
         unsafe {
-            transmute(b2Fixture_GetUserData(self.ptr))
+            transmute(b2Fixture_GetUserData(self.get_ptr()))
         }
     }
 
     pub fn set_user_data(&mut self, data: usize) {
         unsafe {
-            b2Fixture_SetUserData(self.ptr, transmute(data));
+            b2Fixture_SetUserData(self.get_ptr(), transmute(data));
         }
     }
 
     pub fn get_body(&mut self) -> Body {
         unsafe {
-            Body { ptr: b2Fixture_GetBody(self.ptr) }
+            Body { masked_ptr: b2Fixture_GetBody(self.get_ptr()) as usize }
         }
+    }
+
+    pub fn get_ptr(&self) -> *mut B2Fixture {
+        self.masked_ptr as *mut B2Fixture
+
     }
 }

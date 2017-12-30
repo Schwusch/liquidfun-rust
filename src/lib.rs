@@ -51,7 +51,7 @@
 //! ```
 
 #![allow(renamed_and_removed_lints)]
-#![feature(box_syntax, proc_macro, more_struct_aliases)]
+#![feature(box_syntax, proc_macro)]
 
 extern crate libc;
 #[macro_use]

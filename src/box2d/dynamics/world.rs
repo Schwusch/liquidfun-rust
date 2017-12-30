@@ -74,13 +74,13 @@ impl World {
 	/// @warning This function is locked during callbacks.
 	pub fn create_body(&mut self, def: &BodyDef) -> Body {
 		unsafe {
-			Body { ptr: b2World_CreateBody(self.ptr, def) }
+			Body { masked_ptr: b2World_CreateBody(self.ptr, def) as usize }
 		}
 	}
 
 	pub fn destroy_body(&mut self, body: &mut Body) {
 		unsafe {
-			b2World_DestroyBody(self.ptr, body.ptr);
+			b2World_DestroyBody(self.ptr, body.get_ptr());
 		}
 	}
 
@@ -94,11 +94,11 @@ impl World {
 				def.0.joint_type,
 				def.0.user_data,
 				match def.0.body_a {
-					Some(ref b) =>b.ptr,
+					Some(ref b) =>b.get_ptr(),
 					None => ptr::null_mut()
 				},
 				match def.0.body_b {
-					Some(ref b) =>b.ptr,
+					Some(ref b) =>b.get_ptr(),
 					None => ptr::null_mut()
 				},
 				def.0.collide_connected,
@@ -150,7 +150,7 @@ impl World {
 		if ptr.is_null() {
 			None
 		} else {
-			Some(Body { ptr: ptr })
+			Some(Body { masked_ptr: ptr as usize })
 		}
 	}
 
@@ -167,7 +167,7 @@ impl World {
 		if ptr.is_null() {
 			None
 		} else {
-			Some(ParticleSystem { ptr: ptr })
+			Some(ParticleSystem { ptr })
 		}
 	}
 
@@ -188,6 +188,7 @@ impl World {
 			b2World_Step(self.ptr, time_step, velocity_iterations, position_iterations);
 		}
 	}
+
 
 	/// Register a routine for debug drawing. The debug draw functions are called
 	/// inside with World::draw_debug_data() method. The debug draw object is owned
@@ -304,7 +305,7 @@ impl<T: Draw + 'static> DebugDraw<T> {
 	pub fn new(this: T) -> Self {
 		let trait_obj = Box::into_raw(box (box this as Box<Draw>));
 		Self {
-			trait_obj: trait_obj,
+			trait_obj,
 			ptr: unsafe { CppDebugDraw_new(trait_obj) },
 			phantom: PhantomData,
 		}

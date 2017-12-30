@@ -6,7 +6,7 @@ enum B2PolygonShape {}
 
 extern {
     fn b2PolygonShape_Delete(ptr: *mut B2PolygonShape);
-    fn b2PolygonShape_GetVertex(ptr: *mut B2PolygonShape, index: Int32) -> &Vec2;
+    fn b2PolygonShape_GetVertex(ptr: &B2PolygonShape, index: Int32) -> &'static Vec2;
     fn b2PolygonShape_GetVertexCount(ptr: *const B2PolygonShape) -> Int32;
     fn b2PolygonShape_New() -> *mut B2PolygonShape;
     fn b2PolygonShape_SetAsBox(ptr: *mut B2PolygonShape, hx: Float32, hy: Float32);
@@ -50,7 +50,7 @@ impl PolygonShape {
     /// Get a vertex by index.
     pub fn get_vertex(&self, index: i32) -> &Vec2 {
         unsafe {
-            b2PolygonShape_GetVertex(self.ptr, index)
+            b2PolygonShape_GetVertex(&*self.ptr, index)
         }
     }
 

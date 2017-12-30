@@ -7,7 +7,7 @@ use liquidfun::box2d::common::math::*;
 
 #[test]
 fn create_a_zero_particle_color() {
-	let pc = particle_color::ParticleColor::zero();
+	let pc = particle_color::ParticleColorHandle::zero();
 	assert!(pc.is_zero());
 }
 

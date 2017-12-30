@@ -11,8 +11,8 @@ fn create_revolute_joint() {
 	let mut world = World::default();
 
 	let bd = BodyDef::default();
-	let body_a = world.create_body(&bd);
-	let body_b = world.create_body(&bd);
+	let mut body_a = world.create_body(&bd);
+	let mut body_b = world.create_body(&bd);
 
 	let mut shape = PolygonShape::new();
 	shape.set_as_box(1.0, 1.0);

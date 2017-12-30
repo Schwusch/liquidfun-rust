@@ -4,12 +4,16 @@ use std::any::Any;
 extern crate libc;
 extern crate liquidfun;
 
+#[macro_use]
+extern crate bitflags;
+
 use liquidfun::box2d::collision::shapes::polygon_shape::*;
 use liquidfun::box2d::common::math::*;
 use liquidfun::box2d::dynamics::body::*;
 use liquidfun::box2d::dynamics::fixture::*;
 use liquidfun::box2d::dynamics::world::*;
 use liquidfun::box2d::common::draw::*;
+use liquidfun::box2d::particle::particle_color::ParticleColor;
 
 fn main() {
 
@@ -26,7 +30,7 @@ fn main() {
 	// Call the body factory which allocates memory for the ground body
 	// from a pool and creates the ground box shape (also from a pool).
 	// The body is also added to the world.
-	let ground_body = world.create_body(&ground_body_def);
+	let mut ground_body = world.create_body(&ground_body_def);
 
 	// Define the ground box shape.
 	let mut ground_box = PolygonShape::new();
@@ -41,7 +45,7 @@ fn main() {
 	let mut body_def = BodyDef::default();
 	body_def.body_type = BodyType::DynamicBody;
 	body_def.position.set(0.0, 4.0);
-	let body = world.create_body(&body_def);
+	let mut body = world.create_body(&body_def);
 
 	// Define another box shape for our dynamic body.
 	let mut dynamic_box = PolygonShape::new();
@@ -65,7 +69,7 @@ fn main() {
 	let mut debug_draw = DebugDraw::new(MyDebugDraw::new());
 	debug_draw.get().scale = 10.;
 	world.set_debug_draw(&mut debug_draw);
-	debug_draw.set_flags(!0);
+	debug_draw.set_flags(DrawFlags::SHAPE);
 
 	world.draw_debug_data();
 

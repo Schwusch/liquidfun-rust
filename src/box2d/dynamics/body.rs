@@ -107,29 +107,30 @@ extern {
     fn b2Body_GetAngle(this: *const B2Body) -> Float32;
     fn b2Body_GetFixtureList(this: *mut B2Body) -> *mut B2Fixture;
     fn b2Body_GetNext(this: *mut B2Body) -> *mut B2Body;
-    fn b2Body_GetPosition(this: *const B2Body) -> &Vec2;
+    fn b2Body_GetPosition(this: *const B2Body) -> &'static Vec2;
     fn b2Body_GetUserData(this: *const B2Body) -> usize;
     fn b2Body_SetUserData(this: *mut B2Body, data: *mut c_void);
     fn b2Body_GetWorld(this: *const B2Body) -> *mut B2World;
     fn b2Body_GetLocalPoint(this: *const B2Body, worldPoint: &Vec2) -> Vec2;
     fn b2Body_SetTransform(this: *mut B2Body, position: &Vec2, angle: Float32);
     fn b2Body_SetLinearVelocity(this: *mut B2Body, v: &Vec2);
-    fn b2Body_GetLinearVelocity(this: *const B2Body) -> &Vec2;
+    fn b2Body_GetLinearVelocity(this: *const B2Body) -> &'static Vec2;
     fn b2Body_ApplyForceToCenter(this: *const B2Body, force: &Vec2, wake: bool);
     fn b2Body_ApplyLinearImpulse(this: *const B2Body, impulse: &Vec2, point: &Vec2, wake: bool);
-    fn b2Body_GetWorldCenter(this: *const B2Body) -> &Vec2;
-    fn b2Body_GetLocalCenter(this: *const B2Body) -> &Vec2;
+    fn b2Body_GetWorldCenter(this: *const B2Body) -> &'static Vec2;
+    fn b2Body_GetLocalCenter(this: *const B2Body) -> &'static Vec2;
     fn b2Body_SetLinearDamping(this: *mut B2Body, linear_damping: Float32);
     fn b2Body_SetFixedRotation(this: *mut B2Body, flag: bool);
     fn b2Body_GetMass(this: *const B2Body) -> Float32;
     fn b2Body_DestroyFixture(this: *mut B2Body, fixture: *mut B2Fixture);
+    fn b2Body_ApplyForce(this: *mut B2Body, force: &Vec2, point: &Vec2, wake: bool);
 }
 
 /// A rigid body. These are created via b2World::CreateBody.
 #[allow(raw_pointer_derive)]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Body {
-	pub ptr: *mut B2Body
+	pub masked_ptr: usize
 }
 
 impl Body {
@@ -143,7 +144,7 @@ impl Body {
     /// @warning This function is locked during callbacks.
     pub fn create_fixture(&mut self, def: &FixtureDef) -> Fixture {
         unsafe {
-            Fixture { ptr: b2Body_CreateFixture(self.ptr, transmute(def)) }
+            Fixture { masked_ptr: b2Body_CreateFixture(self.get_ptr(), transmute(def)) as usize }
         }
     }
 
@@ -156,7 +157,7 @@ impl Body {
     /// @warning This function is locked during callbacks.
     pub fn create_fixture_from_shape(&mut self, shape: &Shape, density: f32) -> Fixture {
         unsafe {
-            Fixture { ptr: b2Body_CreateFixture_FromShape(self.ptr, shape.handle(), density) }
+            Fixture { masked_ptr: b2Body_CreateFixture_FromShape(self.get_ptr(), shape.handle(), density) as usize }
         }
     }
 
@@ -164,7 +165,7 @@ impl Body {
     /// @return the current world rotation angle in radians.
     pub fn get_angle(&self) -> f32 {
         unsafe {
-            b2Body_GetAngle(self.ptr)
+            b2Body_GetAngle(self.get_ptr())
         }
     }
 
@@ -172,13 +173,13 @@ impl Body {
     pub fn get_fixture_list(&self) -> Option<Fixture> {
         let ptr;
         unsafe {
-            ptr = b2Body_GetFixtureList(self.ptr);
+            ptr = b2Body_GetFixtureList(self.get_ptr());
         }
 
         if ptr.is_null() {
             None
         } else {
-            Some(Fixture { ptr: ptr })
+            Some(Fixture { masked_ptr: ptr as usize })
         }
     }    
 
@@ -187,13 +188,13 @@ impl Body {
         let ptr: *mut B2Body;
         
         unsafe {
-            ptr = b2Body_GetNext(self.ptr);
+            ptr = b2Body_GetNext(self.get_ptr());
         }
 
         if ptr.is_null() {
             None
         } else {
-            Some(Body { ptr: ptr })
+            Some(Body { masked_ptr: ptr as usize })
         }        
     }
 
@@ -201,99 +202,109 @@ impl Body {
     /// @return the world position of the body's origin.
     pub fn get_position(&self) -> &Vec2 {
         unsafe {
-            b2Body_GetPosition(self.ptr)
+            b2Body_GetPosition(self.get_ptr())
         }
     }
 
     /// Get the user data pointer that was provided in the body definition.
     pub fn get_user_data(&self) -> usize {
         unsafe {
-            b2Body_GetUserData(self.ptr)
+            b2Body_GetUserData(self.get_ptr())
         }
     }
 
     pub fn set_user_data(&mut self, data: usize) {
         unsafe {
-            b2Body_SetUserData(self.ptr, transmute(data));
+            b2Body_SetUserData(self.get_ptr(), transmute(data));
         }
     }
 
     /// Get the parent world of this body.
     pub fn get_world(&self) -> World {
         unsafe {
-            World { ptr: b2Body_GetWorld(self.ptr) }
+            World { ptr: b2Body_GetWorld(self.get_ptr()) }
         }
     }
 
     pub fn get_local_point(&self, world_point: &Vec2) -> Vec2 {
         unsafe {
-            b2Body_GetLocalPoint(self.ptr, world_point)
+            b2Body_GetLocalPoint(self.get_ptr(), world_point)
         }
+    }
+
+    pub fn get_ptr(&self) -> *mut B2Body {
+        self.masked_ptr as *mut B2Body
     }
 
     pub fn set_transform(&mut self, position: &Vec2, angle: f32) {
         unsafe {
-            b2Body_SetTransform(self.ptr, position, angle)
+            b2Body_SetTransform(self.get_ptr(), position, angle)
         }
     }
 
     pub fn set_linear_velocity(&mut self, v: &Vec2) {
         unsafe {
-            b2Body_SetLinearVelocity(self.ptr, v)
+            b2Body_SetLinearVelocity(self.get_ptr(), v)
         }
     }
 
     pub fn get_linear_velocity(&self) -> &Vec2 {
         unsafe {
-            b2Body_GetLinearVelocity(self.ptr)
+            b2Body_GetLinearVelocity(self.get_ptr())
+        }
+    }
+
+    pub fn apply_force(&self, force: &Vec2, point: &Vec2, wake: bool) {
+        unsafe {
+            b2Body_ApplyForce(self.get_ptr(), force, point, wake);
         }
     }
 
     pub fn apply_force_to_center(&mut self, force: &Vec2, wake: bool) {
         unsafe {
-            b2Body_ApplyForceToCenter(self.ptr, force, wake);
+            b2Body_ApplyForceToCenter(self.get_ptr(), force, wake);
         }
     }
 
     pub fn apply_linear_impulse(&mut self, impulse: &Vec2, point: &Vec2, wake: bool) {
         unsafe {
-            b2Body_ApplyLinearImpulse(self.ptr, impulse, point, wake);
+            b2Body_ApplyLinearImpulse(self.get_ptr(), impulse, point, wake);
         }
     }
 
     pub fn get_world_center(&self) -> &Vec2 {
         unsafe {
-            b2Body_GetWorldCenter(self.ptr)
+            b2Body_GetWorldCenter(self.get_ptr())
         }
     }
 
     pub fn get_local_center(&self) -> &Vec2 {
         unsafe {
-            b2Body_GetLocalCenter(self.ptr)
+            b2Body_GetLocalCenter(self.get_ptr())
         }
     }
 
     pub fn set_linear_damping(&mut self, linear_damping: f32) {
         unsafe {
-            b2Body_SetLinearDamping(self.ptr, linear_damping)
+            b2Body_SetLinearDamping(self.get_ptr(), linear_damping)
         }
     }
 
     pub fn set_fixed_rotation(&mut self, flag: bool) {
         unsafe {
-            b2Body_SetFixedRotation(self.ptr, flag)
+            b2Body_SetFixedRotation(self.get_ptr(), flag)
         }
     }
 
     pub fn get_mass(&self) -> f32 {
         unsafe {
-            b2Body_GetMass(self.ptr)
+            b2Body_GetMass(self.get_ptr())
         }
     }
 
     pub fn destroy_fixture(&mut self, fixture: &mut Fixture) {
         unsafe {
-            b2Body_DestroyFixture(self.ptr, fixture.ptr)
+            b2Body_DestroyFixture(self.get_ptr(), fixture.get_ptr())
         }
     }
 }

@@ -28,7 +28,7 @@ fn main() {
 	// Call the body factory which allocates memory for the ground body
 	// from a pool and creates the ground box shape (also from a pool).
 	// The body is also added to the world.
-	let ground_body = world.create_body(&ground_body_def);
+	let mut ground_body = world.create_body(&ground_body_def);
 
 	// Define the ground box shape.
 	let mut ground_box = PolygonShape::new();
@@ -43,7 +43,7 @@ fn main() {
 	let mut body_def = BodyDef::default();
 	body_def.body_type = BodyType::DynamicBody;
 	body_def.position.set(0.0, 4.0);
-	let body = world.create_body(&body_def);
+	let mut body = world.create_body(&body_def);
 
 	// Define another box shape for our dynamic body.
 	let mut dynamic_box = PolygonShape::new();

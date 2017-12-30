@@ -86,6 +86,9 @@ extern "C" {
 	void b2Body_DestroyFixture(b2Body* self, b2Fixture* fixture) {
 		self->DestroyFixture(fixture);
 	}
+	void b2Body_ApplyForce(b2Body* self, const b2Vec2& force, const b2Vec2& point, bool wake) {
+        self->ApplyForce(force, point, wake);
+    }
 
 } // extern C
 

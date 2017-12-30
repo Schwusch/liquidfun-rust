@@ -13,6 +13,7 @@ extern "C" {
 	c_b2Vec2 b2World_GetGravity(const b2World* self);
 	b2ParticleSystem* b2World_GetParticleSystemList(b2World* self);
 	b2Body* b2World_CreateBody(b2World* self, const b2BodyDef* bd);
+	void b2World_DestroyBody(b2World* self, b2Body* bd);
 
 	b2RevoluteJoint* b2World_CreateRevoluteJoint(
 		b2World* self,
